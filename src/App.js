@@ -1,33 +1,33 @@
+
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-class ContactList extends Component{
-  render() {
-     const people = ['Tyler', 'WesBos', 'Jim'];
-
-    return(
-      
-        <ol>
-          {
-            people.map(person => (
-              <li>{person}</li>
-            ))
-          }
-          </ol>
-      
-    );
-
-  }
-}
+import ListContacts from './components/ListContacts';
+import * as contactsAPI from './utils/ContactsAPI';
 
 class App extends Component {
+
+  state = {
+    contacts: []
+  }
+
+  componentDidMount() {
+    contactsAPI.getAll().then((contacts) => {
+      this.setState({ contacts })
+    })
+  }
+
+  removeContact = (contact) => {
+    this.setState((state) => ({
+      contacts: state.contacts.filter((c) => c.id !== contact.id)
+    }))
+    contactsAPI.remove(contact)
+  }
+
   render() {
     return (
-      <div className="App">
-        <ContactList/>
+      <div>
+       <ListContacts deleteContact={this.removeContact}  contacts={this.state.contacts}/>
       </div>
-    );
+    )
   }
 }
 
